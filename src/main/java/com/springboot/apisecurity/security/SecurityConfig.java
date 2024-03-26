@@ -13,6 +13,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private ApiKeyAuthFilter apiKeyAuthFilter;
+
+    SecurityConfig(ApiKeyAuthFilter apiKeyAuthFilter) {
+        this.apiKeyAuthFilter = apiKeyAuthFilter;
+    }
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -23,13 +29,9 @@ public class SecurityConfig {
         .authorizeHttpRequests(authorize -> authorize
             .anyRequest().authenticated()
         )
-        .addFilterBefore(apiKeyAuthFilter(), UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    @Bean
-    ApiKeyAuthFilter apiKeyAuthFilter() {
-        return new ApiKeyAuthFilter();
-    }
 }
